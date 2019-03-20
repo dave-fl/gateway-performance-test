@@ -17,11 +17,8 @@ public class GatewayDemoApplication {
     RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("",
-                        r -> {
-                    return r.path("/proxy/demo")
-                                    .filters(f -> f.stripPrefix(1))
-                                    .uri("http://127.0.0.1:8081");
-                        })
+                        r -> r.path("/demo")
+                                        .uri("http://10.81.152.65:61014"))
                 .build();
     }
 }

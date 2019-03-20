@@ -17,6 +17,9 @@
     <modules>
         <module>backend-service-demo</module>
         <module>gateway-demo</module>
+        <module>vertx-backend-service</module>
+        <module>reactornetty-benchmark</module>
+        <module>webflux-benchmark</module>
     </modules>
 
     <properties>

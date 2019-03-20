@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class DemoController {
 
     @GetMapping("/demo")
-    public String demo(@RequestParam long delay,
+    public String demo(@RequestParam(required = false) Long delay,
                        @RequestParam int length) {
         try {
-            Thread.sleep(delay);
+            if (delay != null) {
+                Thread.sleep(delay);
+            }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
