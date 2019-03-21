@@ -1,6 +1,6 @@
 package com.example.backendservicedemo.verticles;
 
-import com.example.backendservicedemo.services.StringGeneratorService;
+import com.example.backendservicedemo.services.BufferGeneratorService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpServer;
@@ -23,7 +23,7 @@ public class StringGeneratingVerticle extends AbstractVerticle {
     private static final Logger LOG = LoggerFactory.getLogger(StringGeneratingVerticle.class);
 
     @Autowired
-    StringGeneratorService stringGeneratorService;
+    BufferGeneratorService bufferGeneratorService;
 
     @Override
     public void start(Future<Void> startFuture) throws Exception {
@@ -38,12 +38,12 @@ public class StringGeneratingVerticle extends AbstractVerticle {
                 request.response().setStatusCode(400).end("Missing parameter length.");
             } else {
                 if (delay == null) {
-                    request.response().end(stringGeneratorService.getGeneratedString(Integer.parseInt(length)));
+                    request.response().end(bufferGeneratorService.generateBuffer(Integer.parseInt(length)));
                 } else {
                     vertx.setTimer(Long.parseLong(delay), id -> {
                         HttpServerResponse response = request.response();
                         if (!response.closed()) {
-                            response.end(stringGeneratorService.getGeneratedString(Integer.parseInt(length)));
+                            response.end(bufferGeneratorService.generateBuffer(Integer.parseInt(length)));
                         }
                     });
                 }
