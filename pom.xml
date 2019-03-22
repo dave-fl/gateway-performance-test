@@ -20,6 +20,7 @@
         <module>vertx-backend-service</module>
         <module>reactornetty-benchmark</module>
         <module>webflux-benchmark</module>
+        <module>webfluxfn-benchmark</module>
     </modules>
 
     <properties>
