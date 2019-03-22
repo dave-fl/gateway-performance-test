@@ -17,13 +17,13 @@
 package io.spring.sample.webfluxfnbenchmark;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 
-import io.spring.sample.webfluxfnbenchmark.services.StringGeneratorService;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.util.CharsetUtil;
+import io.spring.sample.webfluxfnbenchmark.services.DataBufferGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import reactor.core.publisher.Mono;
 
 import org.springframework.context.annotation.Bean;
@@ -35,32 +35,31 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
-import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
+import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 
 @Configuration
 public class RouterFunctionConfig {
 
-	@Autowired
-	private StringGeneratorService stringGeneratorService;
+    @Autowired
+    private DataBufferGeneratorService dataBufferGeneratorService;
 
-	@Bean
-	public RouterFunction<ServerResponse> routerFunctions() {
-		return RouterFunctions.route()
-				.GET("/demo", this::text)
-				.build();
-	}
+    @Bean
+    public RouterFunction<ServerResponse> routerFunctions() {
+        return RouterFunctions.route()
+                .GET("/demo", this::text)
+                .build();
+    }
 
-	private Mono<ServerResponse> text(ServerRequest req) {
-		Optional<String> delay = req.queryParam("delay");
-		Optional<String> length = req.queryParam("length");
+    private Mono<ServerResponse> text(ServerRequest req) {
+        Optional<String> delay = req.queryParam("delay");
+        Optional<String> length = req.queryParam("length");
 
-		String body = this.stringGeneratorService.getGeneratedString(Integer.parseInt(length.get()));
-		Mono<ServerResponse> serverResponseMono = ServerResponse.ok().contentType(MediaType.TEXT_PLAIN).syncBody(body);
+        DataBuffer body = this.dataBufferGeneratorService.getGeneratedString(Integer.parseInt(length.get()));
+        Mono<ServerResponse> serverResponseMono = ServerResponse.ok().contentType(MediaType.TEXT_PLAIN).body(fromObject(body));
 
-		if (delay.isPresent()) {
-			return serverResponseMono.delayElement(Duration.ofMillis(Long.parseLong(delay.get())));
-		}
-		return serverResponseMono;
-	}
+        if (delay.isPresent()) {
+            return serverResponseMono.delayElement(Duration.ofMillis(Long.parseLong(delay.get())));
+        }
+        return serverResponseMono;
+    }
 }
