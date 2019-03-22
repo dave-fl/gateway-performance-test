@@ -26,9 +26,8 @@ public class ExampleApplication {
 
         VerticleFactory verticleFactory = context.getBean(SpringVerticleFactory.class);
         vertx.registerVerticleFactory(verticleFactory);
-
-        // Scale the verticles on cores: create 8 instances during the deployment
-        DeploymentOptions options = new DeploymentOptions().setInstances(8);
+        
+        DeploymentOptions options = new DeploymentOptions().setInstances(Runtime.getRuntime().availableProcessors());
         options.setMaxWorkerExecuteTimeUnit(TimeUnit.SECONDS);
         options.setMaxWorkerExecuteTime(10);
         vertx.deployVerticle(verticleFactory.prefix() + ":" + StringGeneratingVerticle.class.getName(), options);
