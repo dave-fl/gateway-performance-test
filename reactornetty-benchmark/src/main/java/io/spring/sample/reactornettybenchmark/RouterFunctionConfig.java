@@ -61,7 +61,7 @@ final class RouterFunctionConfig {
                                 .delayElement(Duration.ofMillis(Long.parseLong(delay))));
             }
             return res.header("Content-type", "text/plain")
-                    .sendObject(buffer);
+                    .send(Mono.just(buffer));
         };
     }
 }
